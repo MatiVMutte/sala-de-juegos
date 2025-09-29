@@ -1,12 +1,18 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { Juego } from '../../../../shared/interfaces/juego-interface';
+import { AuthService } from '../../../auth/services/user.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
-  imports: []
+  imports: [RouterModule]
 })
 export class HomePageComponent {
+
+  authService = inject(AuthService);
+  isAuthenticated = computed(() => this.authService.isAuthenticated());
+  currentUser = computed(() => this.authService.currentUser());
 
   juegos = signal<Juego[]>([
     {

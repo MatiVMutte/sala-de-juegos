@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../features/auth/services/user.service';
 
 @Component({
@@ -9,10 +9,13 @@ import { AuthService } from '../../features/auth/services/user.service';
 })
 export class NavComponent {
   authService = inject(AuthService);
-  // isAuthenticated = computed(() => this.authService.isAuthenticated);
+  router = inject(Router);
+  isAuthenticated = computed(() => this.authService.isAuthenticated());
+  currentUser = computed(() => this.authService.currentUser());
 
-  constructor() {
-    console.log('NavComponent constructor');
-    // console.log('Is authenticated:', this.isAuthenticated());
+  async signOut() {
+    await this.authService.logout();
+    // Redirigir al login después de cerrar sesión
+    this.router.navigate(['/login']);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/user.service';
-import { User } from '../../interfaces/user.interface';
+import { LoginCredentials } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-login-page', 
@@ -16,14 +16,26 @@ export class LoginPageComponent {
   showErrorModal = signal(false);
   errorMessage = signal('');
 
+  // Usuarios de prueba para login rápido
+  testUsers = [
+    { email: 'mativmutte@gmail.com', password: '321321' },
+    { email: 'asd@gmail.com', password: '321321' },
+    { email: 'muttematias@gmail.com', password: '321321' }
+  ];
+
+  // Login rápido con usuario de prueba
+  async quickLogin(email: string, password: string) {
+    await this.login({ email, password });
+  }
+
   // ---- LOGIN ----
-  async login( user: User ) {
-    if (!this.isInputValid(user)) {
+  async login( credentials: LoginCredentials ) {
+    if (!this.isInputValid(credentials)) {
       this.handleValidationError();
       return;
     }
 
-    const { data, error } = await this.authService.signWithPassword(user);
+    const { data, error } = await this.authService.signWithPassword(credentials);
 
     if (error) {
       this.handleAuthError(error);
@@ -35,8 +47,8 @@ export class LoginPageComponent {
     }
   }
 
-  private isInputValid(user: User) {
-    return user.email.trim() !== '' && user.password.trim() !== '';
+  private isInputValid(credentials: LoginCredentials) {
+    return credentials.email.trim() !== '' && credentials.password.trim() !== '';
   }
 
   private handleValidationError() {

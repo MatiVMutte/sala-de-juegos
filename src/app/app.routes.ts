@@ -4,6 +4,7 @@ import { RegisterPageComponent } from './features/auth/components/register-page/
 import { HomePageComponent } from './features/home/components/home-page/home-page.component';
 import { QuienSoyPageComponent } from './features/quien-soy/components/quien-soy-page/quien-soy-page.component';
 import { GamesPageComponent } from './features/games/games-page/games-page.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -25,7 +26,8 @@ export const routes: Routes = [
     },
     {
         path: 'juegos',
-        component: GamesPageComponent
+        component: GamesPageComponent,
+        canActivate: [authGuard]
     },
     {
         path: '',

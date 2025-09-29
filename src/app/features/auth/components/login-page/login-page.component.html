@@ -31,6 +31,32 @@
                 Ingresar
             </button>
         </form>
+
+        <!-- Botones de login rápido -->
+        <div class="mt-6">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Acceso rápido para pruebas</span>
+                </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 gap-2">
+                @for (user of testUsers; track user.email) {
+                    <button 
+                        type="button"
+                        (click)="quickLogin(user.email, user.password)"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>{{ user.email }}</span>
+                    </button>
+                }
+            </div>
+        </div>
         
         <div class="mt-6 text-center">
             <p class="text-sm text-gray-600">

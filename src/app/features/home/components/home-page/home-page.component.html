@@ -1,8 +1,24 @@
 <div class="flex flex-col h-full py-6 px-4 md:px-8">
     <!-- Header con efecto de gradiente -->
     <header class="text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold mb-3 text-blue-600 tracking-tight">Bienvenido a Arcadia</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Explora nuestra colección de juegos y desafía tus habilidades en un mundo de diversión y competencia.</p>
+        @if (isAuthenticated() && currentUser()) {
+            @if (currentUser()?.photo_url) {
+                <div class="flex justify-center mb-4">
+                    <img [src]="currentUser()?.photo_url" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg">
+                </div>
+            }
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 text-blue-600 tracking-tight">
+                ¡Hola, {{ currentUser()?.name }} {{ currentUser()?.lastname }}!
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Bienvenido de vuelta. Disfruta de nuestra colección de juegos y continúa desafiando tus habilidades.
+            </p>
+        } @else {
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 text-blue-600 tracking-tight">Bienvenido a Arcadia</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Explora nuestra colección de juegos y desafía tus habilidades en un mundo de diversión y competencia.
+            </p>
+        }
     </header>
 
     <!-- Lista de juegos -->
@@ -31,11 +47,23 @@
     </section>
     
     <!-- Sección adicional: Estadísticas o promoción -->
-    <section class="bg-blue-50 rounded-xl p-6 mt-auto">
-        <div class="text-center">
-            <h3 class="text-xl font-semibold text-blue-800 mb-2">¿Listo para la diversión?</h3>
-            <p class="text-gray-600 mb-4">Regístrate para guardar tus puntuaciones y competir con otros jugadores.</p>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-colors">Registrarse</button>
-        </div>
-    </section>
+    @if (!isAuthenticated()) {
+        <section class="bg-blue-50 rounded-xl p-6 mt-auto">
+            <div class="text-center">
+                <h3 class="text-xl font-semibold text-blue-800 mb-2">¿Listo para la diversión?</h3>
+                <p class="text-gray-600 mb-4">Regístrate para guardar tus puntuaciones y competir con otros jugadores.</p>
+                <div class="flex gap-4 justify-center">
+                    <a routerLink="/register" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-colors">Registrarse</a>
+                    <a routerLink="/login" class="bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white py-2 px-6 rounded-md transition-colors">Iniciar sesión</a>
+                </div>
+            </div>
+        </section>
+    } @else {
+        <section class="bg-blue-50 rounded-xl p-6 mt-auto">
+            <div class="text-center">
+                <h3 class="text-xl font-semibold text-blue-800 mb-2">¡Sigue jugando!</h3>
+                <p class="text-gray-600">Explora más juegos y mejora tus habilidades cada día.</p>
+            </div>
+        </section>
+    }
 </div>

@@ -71,4 +71,58 @@
         </div>
       </div>
     </div>
+
+    <!-- Sección del juego propio -->
+    <div class="mt-8">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-8 rounded-lg shadow-xl text-white">
+        <div class="flex items-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <h2 class="text-3xl font-bold">Mi Juego Propio: Adivina el Número</h2>
+        </div>
+        
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-4">
+          <h3 class="text-2xl font-semibold mb-3">¿De qué se trata?</h3>
+          <p class="text-lg mb-4 leading-relaxed">
+            Un juego de adivinanza donde debes descubrir el número secreto que la computadora ha elegido. 
+            A medida que intentas adivinarlo, el juego te dará pistas basadas en qué tan cerca estás del número correcto.
+          </p>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-4">
+          <h3 class="text-2xl font-semibold mb-3">Cómo se juega</h3>
+          <ol class="list-decimal list-inside space-y-3 text-lg">
+            <li>El juego elige un número secreto entre 1 y 100</li>
+            <li>Tú ingresas tu intento de adivinanza</li>
+            <li>El juego te da una pista según qué tan cerca estés:
+              <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                <li><strong class="text-blue-100">Super Helado:</strong> Muy lejos del número (más de 50 de distancia)</li>
+                <li><strong class="text-blue-100">Frío:</strong> Lejos del número (entre 30 y 50 de distancia)</li>
+                <li><strong class="text-blue-100">Tibio:</strong> Cerca del número (entre 15 y 30 de distancia)</li>
+                <li><strong class="text-blue-100">Caliente:</strong> Muy cerca del número (entre 5 y 15 de distancia)</li>
+                <li><strong class="text-blue-100">Ardiente:</strong> ¡Calientísimo! (menos de 5 de distancia)</li>
+              </ul>
+            </li>
+            <li>Continúas intentando hasta adivinar el número correcto</li>
+            <li>¡Ganas cuando lo adivinas! El juego registra cuántos intentos necesitaste</li>
+          </ol>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <h3 class="text-2xl font-semibold mb-3">Objetivo y Puntuación</h3>
+          <p class="text-lg leading-relaxed">
+            El objetivo es adivinar el número en la menor cantidad de intentos posibles. 
+            Cada partida guarda tu resultado para que puedas ver tu progreso y competir con otros jugadores 
+            por el menor número de intentos. ¡Usa las pistas de temperatura de manera inteligente para optimizar tus intentos!
+          </p>
+        </div>
+
+        <div class="mt-6 text-center">
+          <p class="text-xl font-semibold italic">
+            "Un juego simple pero adictivo que combina lógica, deducción y un poco de suerte"
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
