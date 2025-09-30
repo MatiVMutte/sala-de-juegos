@@ -1,68 +1,147 @@
-<div class="flex flex-col h-full py-6 px-4 md:px-8">
-    <!-- Header con efecto de gradiente -->
-    <header class="text-center mb-12">
-        @if (isAuthenticated() && currentUser()) {
-            @if (currentUser()?.photo_url) {
-                <div class="flex justify-center mb-4">
-                    <img [src]="currentUser()?.photo_url" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg">
+<div class="flex flex-col h-full overflow-y-auto">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            @if (isAuthenticated() && currentUser()) {
+                <div class="flex flex-col items-center mb-6">
+                    @if (currentUser()?.photo_url) {
+                        <img [src]="currentUser()?.photo_url" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg mb-4">
+                    }
+                    <h1 class="text-4xl md:text-5xl font-bold mb-3 animate-pulse">
+                        ¡Hola, {{ currentUser()?.username }}!
+                    </h1>
                 </div>
-            }
-            <h1 class="text-4xl md:text-5xl font-bold mb-3 text-blue-600 tracking-tight">
-                ¡Hola, {{ currentUser()?.name }} {{ currentUser()?.lastname }}!
-            </h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Bienvenido de vuelta. Disfruta de nuestra colección de juegos y continúa desafiando tus habilidades.
-            </p>
-        } @else {
-            <h1 class="text-4xl md:text-5xl font-bold mb-3 text-blue-600 tracking-tight">Bienvenido a Arcadia</h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Explora nuestra colección de juegos y desafía tus habilidades en un mundo de diversión y competencia.
-            </p>
-        }
-    </header>
-
-    <!-- Lista de juegos -->
-    <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-6 text-blue-800 border-b-2 border-blue-200 pb-2">Juegos</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for(juego of juegos() ; track juego.id) {
-                <div class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300">
-                    <!-- Imagen del juego -->
-                    <div class="relative h-48 overflow-hidden">
-                        <img [src]="juego.imagen" alt="{{ juego.nombre }}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                            <h3 class="text-xl font-bold text-white p-4">{{ juego.nombre }}</h3>
-                        </div>
-                    </div>
-                    
-                    <!-- Descripción y botón -->
-                    <div class="p-4">
-                        <p class="text-gray-600 mb-4">{{ juego.descripcion }}</p>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors w-full">Jugar ahora</button>
-                    </div>
+                <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
+                    Bienvenido a tu sala de juegos. ¿Listo para un nuevo desafío?
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a routerLink="/juegos" class="px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Ver todos los juegos
+                    </a>
+                    <a routerLink="/chat" class="px-8 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:bg-blue-400 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Ir al chat
+                    </a>
+                </div>
+            } @else {
+                <h1 class="text-5xl md:text-6xl font-bold mb-4">
+                    Sala de Juegos
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
+                    Desafía tus habilidades, compite con otros jugadores y diviértete
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a routerLink="/register" class="px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Crear cuenta
+                    </a>
+                    <a routerLink="/login" class="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-300">
+                        Iniciar sesión
+                    </a>
                 </div>
             }
         </div>
     </section>
+
+    <!-- Juegos Destacados -->
+    <section class="py-12 px-4 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+                    Juegos Disponibles
+                </h2>
+                <p class="text-gray-600 text-lg">
+                    Elige tu favorito y comienza a jugar
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @for(juego of juegos(); track juego.id) {
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                        <div class="relative h-48 overflow-hidden group">
+                            <img [src]="juego.imagen" 
+                                 alt="{{ juego.nombre }}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-xl font-bold text-white">{{ juego.nombre }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <p class="text-gray-600 mb-4 h-12">{{ juego.descripcion }}</p>
+                            @if (juego.ruta) {
+                                <a [routerLink]="juego.ruta" 
+                                   class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-colors">
+                                    Jugar ahora
+                                </a>
+                            } @else {
+                                <button disabled 
+                                        class="w-full bg-gray-300 text-gray-500 py-2.5 px-4 rounded-lg font-semibold cursor-not-allowed">
+                                    Próximamente
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
     
-    <!-- Sección adicional: Estadísticas o promoción -->
-    @if (!isAuthenticated()) {
-        <section class="bg-blue-50 rounded-xl p-6 mt-auto">
-            <div class="text-center">
-                <h3 class="text-xl font-semibold text-blue-800 mb-2">¿Listo para la diversión?</h3>
-                <p class="text-gray-600 mb-4">Regístrate para guardar tus puntuaciones y competir con otros jugadores.</p>
-                <div class="flex gap-4 justify-center">
-                    <a routerLink="/register" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-colors">Registrarse</a>
-                    <a routerLink="/login" class="bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white py-2 px-6 rounded-md transition-colors">Iniciar sesión</a>
+    <!-- Features Section -->
+    <section class="py-12 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Juego Instantáneo</h3>
+                    <p class="text-gray-600">Sin descargas ni instalaciones. Juega directamente desde tu navegador</p>
+                </div>
+                
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Puntuaciones</h3>
+                    <p class="text-gray-600">Compite con otros jugadores y sube en los rankings globales</p>
+                </div>
+                
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Chat en Vivo</h3>
+                    <p class="text-gray-600">Chatea con otros jugadores en tiempo real mientras juegas</p>
                 </div>
             </div>
-        </section>
-    } @else {
-        <section class="bg-blue-50 rounded-xl p-6 mt-auto">
-            <div class="text-center">
-                <h3 class="text-xl font-semibold text-blue-800 mb-2">¡Sigue jugando!</h3>
-                <p class="text-gray-600">Explora más juegos y mejora tus habilidades cada día.</p>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    @if (!isAuthenticated()) {
+        <section class="bg-gradient-to-r from-blue-600 to-blue-700 py-12 px-4">
+            <div class="max-w-4xl mx-auto text-center text-white">
+                <h3 class="text-3xl font-bold mb-4">¿Listo para empezar?</h3>
+                <p class="text-xl text-blue-100 mb-8">
+                    Únete ahora y guarda tus puntuaciones para competir con otros jugadores
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a routerLink="/register" 
+                       class="px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+                        Crear cuenta gratis
+                    </a>
+                    <a routerLink="/login" 
+                       class="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-blue-600 transition-all">
+                        Ya tengo cuenta
+                    </a>
+                </div>
             </div>
         </section>
     }

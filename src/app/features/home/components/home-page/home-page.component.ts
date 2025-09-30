@@ -17,21 +17,31 @@ export class HomePageComponent {
   juegos = signal<Juego[]>([
     {
       id: 1,
-      nombre: 'Juego 1',
-      descripcion: 'Descripcion del juego 1',
-      imagen: '#'
+      nombre: 'Mayor o Menor',
+      descripcion: '¡Adivina si la siguiente carta será mayor o menor!',
+      imagen: '/images/games/mayor-o-menor.png',
+      ruta: '/juegos/mayor-o-menor'
     },
     {
       id: 2,
-      nombre: 'Juego 2',
-      descripcion: 'Descripcion del juego 2',
-      imagen: '#'
+      nombre: 'Ahorcado',
+      descripcion: 'Adivina la palabra oculta letra por letra',
+      imagen: '/images/games/ahorcado.png',
+      ruta: '/juegos/ahorcado'
     },
     {
       id: 3,
-      nombre: 'Juego 3',
-      descripcion: 'Descripcion del juego 3',
-      imagen: '#'
+      nombre: 'Preguntados',
+      descripcion: 'Responde preguntas de videojuegos',
+      imagen: '/images/games/preguntados.png',
+      ruta: '/juegos/preguntados'
+    },
+    {
+      id: 4,
+      nombre: 'Adivina el Número',
+      descripcion: 'Encuentra el número secreto con pistas',
+      imagen: '/images/games/adivinar-el-numero.png',
+      ruta: '/juegos/adivina-numero'
     }
   ]);
 

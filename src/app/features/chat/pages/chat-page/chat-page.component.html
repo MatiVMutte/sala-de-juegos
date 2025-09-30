@@ -1,0 +1,132 @@
+<div class="flex flex-col h-full bg-gradient-to-br from-blue-50 to-blue-100">
+  
+  <!-- Header -->
+  <div class="bg-white shadow-md px-6 py-4 border-b">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">Sala de Chat Global</h1>
+          <p class="text-sm text-gray-500">Todos los jugadores conectados</p>
+        </div>
+      </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div class="flex-1 overflow-hidden">
+    <div class="h-full max-w-4xl mx-auto px-6 py-4">
+      @if (cargandoMensajes()) {
+        <div class="flex justify-center items-center h-full">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Cargando mensajes...</p>
+          </div>
+        </div>
+      } @else {
+        <div 
+          #messagesContainer
+          class="h-full overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
+          
+          @if (mensajes().length === 0) {
+            <div class="flex justify-center items-center h-full">
+              <div class="text-center text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <p class="text-lg font-medium">No hay mensajes todavía</p>
+                <p class="text-sm mt-1">¡Sé el primero en escribir!</p>
+              </div>
+            </div>
+          }
+
+          @for (mensaje of mensajes(); track mensaje.id) {
+            <div class="flex"
+                 [class.justify-end]="esMiMensaje(mensaje)"
+                 [class.justify-start]="!esMiMensaje(mensaje)">
+              
+              <div class="flex gap-2 max-w-md"
+                   [class.flex-row-reverse]="esMiMensaje(mensaje)">
+                
+                <!-- Avatar -->
+                @if (mensaje.photo_url) {
+                  <img [src]="mensaje.photo_url" 
+                       [alt]="mensaje.username || 'Usuario'"
+                       class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                } @else {
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+                       [class.bg-blue-600]="esMiMensaje(mensaje)"
+                       [class.bg-blue-500]="!esMiMensaje(mensaje)">
+                    {{(mensaje.username || 'U').charAt(0).toUpperCase()}}
+                  </div>
+                }
+
+                <!-- Mensaje -->
+                <div>
+                  <div class="rounded-2xl px-4 py-2 shadow-md"
+                       [class.bg-blue-500]="esMiMensaje(mensaje)"
+                       [class.text-white]="esMiMensaje(mensaje)"
+                       [class.bg-white]="!esMiMensaje(mensaje)"
+                       [class.text-gray-800]="!esMiMensaje(mensaje)">
+                    
+                    @if (!esMiMensaje(mensaje)) {
+                      <p class="text-xs font-semibold mb-1"
+                         [class.text-blue-600]="!esMiMensaje(mensaje)">
+                        {{mensaje.username || 'Usuario'}}
+                      </p>
+                    }
+                    
+                    <p class="break-words">{{mensaje.message}}</p>
+                  </div>
+                  
+                  <p class="text-xs mt-1 px-2"
+                     [class.text-right]="esMiMensaje(mensaje)"
+                     [class.text-left]="!esMiMensaje(mensaje)"
+                     [class.text-gray-500]="true">
+                    {{formatearHora(mensaje.created_at)}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="bg-white border-t shadow-lg px-6 py-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex gap-3">
+        <input 
+          type="text"
+          [(ngModel)]="nuevoMensaje"
+          (keydown)="onEnterKey($event)"
+          [disabled]="enviandoMensaje()"
+          placeholder="Escribe un mensaje..."
+          class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        
+        <button
+          (click)="enviarMensaje()"
+          [disabled]="!nuevoMensaje().trim() || enviandoMensaje()"
+          class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          @if (enviandoMensaje()) {
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+            <span>Enviar</span>
+          }
+        </button>
+      </div>
+      
+      <p class="text-xs text-gray-500 mt-2 text-center">
+        Presiona Enter para enviar o Shift+Enter para nueva línea
+      </p>
+    </div>
+  </div>
+</div>

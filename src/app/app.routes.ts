@@ -8,6 +8,7 @@ import { MayorOMenorComponent } from './features/games/list-games/mayor-o-menor/
 import { AhorcadoComponent } from './features/games/list-games/ahorcado/components/ahorcado.component';
 import { AdivinaNumeroComponent } from './features/games/list-games/adivina-numero/components/adivina-numero.component';
 import { PreguntadosComponent } from './features/games/list-games/preguntados/components/preguntados.component';
+import { ChatPageComponent } from './features/chat/pages/chat-page/chat-page.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -51,6 +52,11 @@ export const routes: Routes = [
     {
         path: 'juegos/preguntados',
         component: PreguntadosComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'chat',
+        component: ChatPageComponent,
         canActivate: [authGuard]
     },
     {
