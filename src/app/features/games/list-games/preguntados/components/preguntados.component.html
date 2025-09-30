@@ -1,0 +1,148 @@
+<div class="min-h-full bg-gradient-to-br from-purple-50 to-purple-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    
+    <div class="flex items-center justify-between mb-8">
+      <button 
+        (click)="volverAJuegos()"
+        class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Volver</span>
+      </button>
+      <h1 class="text-3xl font-bold text-purple-800">Preguntados</h1>
+      <div class="w-24"></div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Correctas</p>
+        <p class="text-3xl font-bold text-green-600">{{respuestasCorrectas()}}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Incorrectas</p>
+        <p class="text-3xl font-bold text-red-600">{{respuestasIncorrectas()}}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Progreso</p>
+        <p class="text-3xl font-bold text-purple-600">{{preguntasRespondidas()}}/{{totalPreguntas()}}</p>
+      </div>
+    </div>
+
+    @if (cargandoPreguntas()) {
+      <div class="bg-white rounded-xl shadow-xl p-12 text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+        <p class="text-xl font-semibold text-gray-700">{{mensaje()}}</p>
+      </div>
+    }
+
+    @if (juegoIniciado() && !cargandoPreguntas() && preguntaActual()) {
+      <div class="bg-white rounded-xl shadow-xl p-8 mb-8">
+        
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
+              Pregunta {{preguntaActualIndex() + 1}} de {{totalPreguntas()}}
+            </span>
+            <span class="text-sm font-semibold text-gray-600">
+              {{porcentajeAciertos()}}% aciertos
+            </span>
+          </div>
+          
+          <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+            <div class="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                 [style.width.%]="(preguntasRespondidas() / totalPreguntas()) * 100">
+            </div>
+          </div>
+
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">
+            {{preguntaActual()!.pregunta}}
+          </h2>
+          <p class="text-sm text-gray-500">{{preguntaActual()!.categoria}}</p>
+        </div>
+
+        @if (!juegoTerminado()) {
+          <div class="grid grid-cols-1 gap-3 mb-6">
+            @for (respuesta of preguntaActual()!.respuestas; track respuesta) {
+              <button
+                (click)="seleccionarRespuesta(respuesta)"
+                [disabled]="mostrandoResultado()"
+                class="px-6 py-4 rounded-lg font-semibold text-left transition-all shadow-md"
+                [class.bg-green-500]="esRespuestaCorrecta(respuesta)"
+                [class.text-white]="esRespuestaCorrecta(respuesta)"
+                [class.bg-red-500]="esRespuestaIncorrecta(respuesta)"
+                [class.text-white]="esRespuestaIncorrecta(respuesta)"
+                [class.bg-gray-100]="!esRespuestaCorrecta(respuesta) && !esRespuestaIncorrecta(respuesta)"
+                [class.hover:bg-purple-100]="!mostrandoResultado()"
+                [class.cursor-not-allowed]="mostrandoResultado()">
+                {{respuesta}}
+              </button>
+            }
+          </div>
+        }
+
+        @if (mensaje() && !juegoTerminado()) {
+          <div class="text-center p-4 rounded-lg"
+               [class.bg-green-100]="respuestaSeleccionada() === preguntaActual()!.respuestaCorrecta"
+               [class.bg-red-100]="respuestaSeleccionada() !== preguntaActual()!.respuestaCorrecta">
+            <p class="font-semibold"
+               [class.text-green-700]="respuestaSeleccionada() === preguntaActual()!.respuestaCorrecta"
+               [class.text-red-700]="respuestaSeleccionada() !== preguntaActual()!.respuestaCorrecta">
+              {{mensaje()}}
+            </p>
+          </div>
+        }
+
+        @if (juegoTerminado()) {
+          <div class="text-center mb-6">
+            <div class="bg-purple-100 border-2 border-purple-500 rounded-lg p-6">
+              <p class="text-xl font-bold text-purple-800 whitespace-pre-line">
+                {{mensaje()}}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button 
+              (click)="iniciarJuego()"
+              class="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Jugar de nuevo
+            </button>
+            <button 
+              (click)="volverAJuegos()"
+              class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Salir
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="mb-8">
+      <app-game-ranking gameName="preguntados" [limit]="10"></app-game-ranking>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-3">Como jugar</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 font-bold">1.</span>
+          <span>Responde 10 preguntas de cultura general sobre videojuegos</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 font-bold">2.</span>
+          <span>Selecciona la respuesta que crees correcta</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 font-bold">3.</span>
+          <span>Acumula la mayor cantidad de respuestas correctas</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 font-bold">4.</span>
+          <span>Las preguntas se cargan desde una API externa</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,173 @@
+<div class="min-h-full bg-gradient-to-br from-blue-50 to-blue-100 p-6">
+  <div class="max-w-6xl mx-auto">
+    
+    <div class="flex items-center justify-between mb-8">
+      <button 
+        (click)="volverAJuegos()"
+        class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Volver</span>
+      </button>
+      <h1 class="text-3xl font-bold text-blue-800">Adivina el Número</h1>
+      <div class="w-24"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Intentos realizados</p>
+        <p class="text-3xl font-bold text-blue-600">{{numeroIntentos()}}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Estado</p>
+        <p class="text-lg font-bold" 
+           [class.text-green-600]="juegoTerminado()"
+           [class.text-blue-600]="!juegoTerminado()">
+          {{juegoTerminado() ? 'Completado' : 'En progreso'}}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-xl p-8">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Estoy pensando en un número...</h2>
+          <p class="text-gray-600">Entre 1 y 100</p>
+        </div>
+
+        @if (!juegoTerminado()) {
+          <div class="mb-6">
+            <label class="block text-gray-700 font-semibold mb-2">Tu intento:</label>
+            <div class="flex gap-3">
+              <input 
+                type="number" 
+                [(ngModel)]="inputNumero"
+                (keydown)="onEnterKey($event)"
+                min="1" 
+                max="100"
+                placeholder="Ingresa un número"
+                class="flex-1 px-4 py-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500 text-xl text-center font-bold">
+              <button 
+                (click)="realizarIntento()"
+                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors">
+                Adivinar
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (mensaje()) {
+          <div class="mb-6">
+            <div class="rounded-lg p-4 text-center border-2"
+                 [class.bg-green-100]="juegoTerminado()"
+                 [class.border-green-500]="juegoTerminado()"
+                 [class.bg-blue-50]="!juegoTerminado()"
+                 [class.border-blue-300]="!juegoTerminado()">
+              <p class="font-semibold whitespace-pre-line"
+                 [class.text-green-700]="juegoTerminado()"
+                 [class.text-gray-700]="!juegoTerminado()">
+                {{mensaje()}}
+              </p>
+            </div>
+          </div>
+        }
+
+        @if (ultimoIntento() && !juegoTerminado()) {
+          <div class="mb-6">
+            <div class="rounded-lg p-6 text-center transition-all"
+                 [ngClass]="obtenerInfoTemperatura(ultimoIntento()!.temperatura).bgColor">
+              <p class="text-2xl font-bold mb-1"
+                 [ngClass]="obtenerInfoTemperatura(ultimoIntento()!.temperatura).color">
+                {{obtenerInfoTemperatura(ultimoIntento()!.temperatura).nombre}}
+              </p>
+              <p class="text-sm text-gray-600">Tu último intento: {{ultimoIntento()!.numero}}</p>
+            </div>
+          </div>
+        }
+
+        @if (juegoTerminado()) {
+          <div class="flex gap-3">
+            <button 
+              (click)="iniciarJuego()"
+              class="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Jugar de nuevo
+            </button>
+            <button 
+              (click)="volverAJuegos()"
+              class="px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Salir
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white rounded-xl shadow-xl p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">Escala de Temperatura</h3>
+          <div class="space-y-3">
+            @for (temp of ['super-helado', 'frio', 'tibio', 'caliente', 'ardiente']; track temp) {
+              <div class="rounded-lg p-3 border-2 transition-all"
+                   [ngClass]="obtenerInfoTemperatura(temp).bgColor"
+                   [class.border-4]="ultimoIntento()?.temperatura === temp"
+                   [class.border-gray-800]="ultimoIntento()?.temperatura === temp">
+                <p class="font-bold" [ngClass]="obtenerInfoTemperatura(temp).color">
+                  {{obtenerInfoTemperatura(temp).nombre}}
+                </p>
+                <p class="text-xs text-gray-600">{{obtenerInfoTemperatura(temp).rango}}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (historialIntentos().length > 0) {
+          <div class="bg-white rounded-xl shadow-xl p-6 max-h-96 overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Historial</h3>
+            <div class="space-y-2">
+              @for (intento of historialIntentos(); track $index) {
+                <div class="flex items-center justify-between p-3 rounded-lg border"
+                     [ngClass]="obtenerInfoTemperatura(intento.temperatura).bgColor">
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-gray-600">#{{$index + 1}}</span>
+                    <span class="text-xl font-bold text-gray-800">{{intento.numero}}</span>
+                  </div>
+                  <span class="text-sm font-semibold" 
+                        [ngClass]="obtenerInfoTemperatura(intento.temperatura).color">
+                    {{obtenerInfoTemperatura(intento.temperatura).nombre}}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <app-game-ranking gameName="adivina-numero" [limit]="10" [lowerIsBetter]="true"></app-game-ranking>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-3">Cómo jugar</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">1.</span>
+          <span>El juego elige un número secreto entre 1 y 100</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">2.</span>
+          <span>Ingresa tu intento y recibe pistas de temperatura</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">3.</span>
+          <span>Mientras más cerca estés, más caliente será la temperatura</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">4.</span>
+          <span>Intenta adivinar en la menor cantidad de intentos posible</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

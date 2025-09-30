@@ -33,9 +33,15 @@
                     <!-- Descripción y botón -->
                     <div class="p-4">
                         <p class="text-gray-600 mb-4">{{ juego.descripcion }}</p>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors w-full">
-                            Jugar ahora
-                        </button>
+                        @if (juego.ruta) {
+                            <a [routerLink]="juego.ruta" class="block bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors w-full text-center">
+                                Jugar ahora
+                            </a>
+                        } @else {
+                            <button class="bg-gray-400 text-white py-2 px-4 rounded-md w-full cursor-not-allowed" disabled>
+                                Próximamente
+                            </button>
+                        }
                     </div>
                 </div>
             }
@@ -59,18 +65,10 @@
             </div>
         </section>
     } @else {
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-auto">
-            <div class="bg-blue-50 rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-blue-600 mb-1">{{ juegos().length }}</div>
-                <div class="text-sm text-gray-600">Juegos disponibles</div>
-            </div>
-            <div class="bg-green-50 rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-green-600 mb-1">0</div>
-                <div class="text-sm text-gray-600">Juegos completados</div>
-            </div>
-            <div class="bg-purple-50 rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-purple-600 mb-1">0</div>
-                <div class="text-sm text-gray-600">Puntos totales</div>
+        <section class="flex justify-center mt-auto">
+            <div class="bg-blue-50 rounded-lg p-6 text-center w-64">
+                <div class="text-4xl font-bold text-blue-600 mb-2">{{ juegos().length }}</div>
+                <div class="text-base text-gray-600">Juegos disponibles</div>
             </div>
         </section>
     }

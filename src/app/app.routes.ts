@@ -3,7 +3,11 @@ import { LoginPageComponent } from './features/auth/components/login-page/login-
 import { RegisterPageComponent } from './features/auth/components/register-page/register-page.component';
 import { HomePageComponent } from './features/home/components/home-page/home-page.component';
 import { QuienSoyPageComponent } from './features/quien-soy/components/quien-soy-page/quien-soy-page.component';
-import { GamesPageComponent } from './features/games/games-page/games-page.component';
+import { GamesPageComponent } from './features/games/pages/games-page/games-page.component';
+import { MayorOMenorComponent } from './features/games/list-games/mayor-o-menor/components/mayor-o-menor.component';
+import { AhorcadoComponent } from './features/games/list-games/ahorcado/components/ahorcado.component';
+import { AdivinaNumeroComponent } from './features/games/list-games/adivina-numero/components/adivina-numero.component';
+import { PreguntadosComponent } from './features/games/list-games/preguntados/components/preguntados.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -27,6 +31,26 @@ export const routes: Routes = [
     {
         path: 'juegos',
         component: GamesPageComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'juegos/mayor-o-menor',
+        component: MayorOMenorComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'juegos/ahorcado',
+        component: AhorcadoComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'juegos/adivina-numero',
+        component: AdivinaNumeroComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'juegos/preguntados',
+        component: PreguntadosComponent,
         canActivate: [authGuard]
     },
     {

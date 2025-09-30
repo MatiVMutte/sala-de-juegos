@@ -1,0 +1,224 @@
+<div class="min-h-full bg-gradient-to-br from-blue-50 to-blue-100 p-6">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <button 
+        (click)="volverAJuegos()"
+        class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <h1 class="text-3xl font-bold text-blue-800">Ahorcado</h1>
+      
+      <div class="w-24"></div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Palabras acertadas</p>
+        <p class="text-3xl font-bold text-green-600">{{ palabrasAcertadas() }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Intentos restantes</p>
+        <p class="text-3xl font-bold" 
+           [class.text-red-600]="intentosRestantes() <= 2"
+           [class.text-orange-600]="intentosRestantes() > 2 && intentosRestantes() <= 4"
+           [class.text-blue-600]="intentosRestantes() > 4">
+          {{ intentosRestantes() }}
+        </p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Palabras jugadas</p>
+        <p class="text-3xl font-bold text-purple-600">{{ palabrasJugadas() }}</p>
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      
+      <!-- Dibujo del Ahorcado -->
+      <div class="bg-white rounded-xl shadow-xl p-8">
+        <div class="flex justify-center">
+          <svg viewBox="0 0 200 250" class="w-64 h-80">
+            <!-- Base -->
+            <line x1="10" y1="230" x2="150" y2="230" stroke="#333" stroke-width="4"/>
+            <!-- Poste vertical -->
+            <line x1="50" y1="230" x2="50" y2="20" stroke="#333" stroke-width="4"/>
+            <!-- Poste horizontal -->
+            <line x1="50" y1="20" x2="130" y2="20" stroke="#333" stroke-width="4"/>
+            <!-- Cuerda -->
+            <line x1="130" y1="20" x2="130" y2="50" stroke="#333" stroke-width="2"/>
+            
+            @if (intentosRestantes() <= 5) {
+              <!-- Cabeza -->
+              <circle cx="130" cy="70" r="20" stroke="#333" stroke-width="3" fill="none"/>
+            }
+            @if (intentosRestantes() <= 4) {
+              <!-- Cuerpo -->
+              <line x1="130" y1="90" x2="130" y2="150" stroke="#333" stroke-width="3"/>
+            }
+            @if (intentosRestantes() <= 3) {
+              <!-- Brazo izquierdo -->
+              <line x1="130" y1="110" x2="100" y2="130" stroke="#333" stroke-width="3"/>
+            }
+            @if (intentosRestantes() <= 2) {
+              <!-- Brazo derecho -->
+              <line x1="130" y1="110" x2="160" y2="130" stroke="#333" stroke-width="3"/>
+            }
+            @if (intentosRestantes() <= 1) {
+              <!-- Pierna izquierda -->
+              <line x1="130" y1="150" x2="110" y2="190" stroke="#333" stroke-width="3"/>
+            }
+            @if (intentosRestantes() === 0) {
+              <!-- Pierna derecha -->
+              <line x1="130" y1="150" x2="150" y2="190" stroke="#333" stroke-width="3"/>
+            }
+          </svg>
+        </div>
+      </div>
+
+      <!-- Panel de Juego -->
+      <div class="bg-white rounded-xl shadow-xl p-8">
+        @if (palabraActual()) {
+          <!-- Categoría y Pista -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                {{ palabraActual()!.categoria }}
+              </span>
+            </div>
+            <p class="text-gray-700 italic">
+              Pista: {{ palabraActual()!.pista }}
+            </p>
+          </div>
+
+          <!-- Palabra a Adivinar -->
+          <div class="mb-8">
+            <div class="flex flex-wrap justify-center gap-2">
+              @for (letra of palabraRevelada().split(''); track $index) {
+                <div class="w-12 h-16 flex items-center justify-center border-b-4 border-blue-600">
+                  <span class="text-3xl font-bold text-gray-800">
+                    {{ letra === '_' ? '' : letra }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Mensaje -->
+          @if (mensaje()) {
+            <div class="mb-6">
+              <div class="rounded-lg p-4 text-center"
+                   [class.bg-green-100]="gano() && !juegoTerminado()"
+                   [class.bg-red-100]="juegoTerminado()"
+                   [class.border-2]="true"
+                   [class.border-green-500]="gano() && !juegoTerminado()"
+                   [class.border-red-500]="juegoTerminado()">
+                <p class="font-semibold whitespace-pre-line"
+                   [class.text-green-700]="gano() && !juegoTerminado()"
+                   [class.text-red-700]="juegoTerminado()">
+                  {{ mensaje() }}
+                </p>
+              </div>
+            </div>
+          }
+
+          <!-- Botones de Acción -->
+          @if (gano() && !juegoTerminado()) {
+            <div class="flex gap-3">
+              <button 
+                (click)="nuevaPalabra()"
+                class="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md transition-colors">
+                Siguiente Palabra
+              </button>
+              <button 
+                (click)="finalizarJuego(); juegoTerminado.set(true)"
+                class="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-colors">
+                Terminar
+              </button>
+            </div>
+          }
+
+          @if (juegoTerminado()) {
+            <div class="flex gap-3">
+              <button 
+                (click)="reiniciarJuego()"
+                class="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                Jugar de nuevo
+              </button>
+              <button 
+                (click)="volverAJuegos()"
+                class="px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                Salir
+              </button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Teclado -->
+    @if (!juegoTerminado() && !gano()) {
+      <div class="bg-white rounded-xl shadow-xl p-6 mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Selecciona una letra</h3>
+        <div class="flex flex-wrap justify-center gap-2">
+          @for (letra of alfabeto; track letra) {
+            <button
+              (click)="adivinarLetra(letra)"
+              [disabled]="letraYaUsada(letra)"
+              class="w-12 h-12 rounded-lg font-bold text-lg transition-all shadow-md"
+              [class.bg-green-500]="esLetraCorrecta(letra)"
+              [class.text-white]="esLetraCorrecta(letra)"
+              [class.bg-red-500]="esLetraIncorrecta(letra)"
+              [class.text-white]="esLetraIncorrecta(letra)"
+              [class.bg-blue-600]="!letraYaUsada(letra)"
+              [class.text-white]="!letraYaUsada(letra)"
+              [class.hover:bg-blue-700]="!letraYaUsada(letra)"
+              [class.opacity-50]="letraYaUsada(letra)"
+              [class.cursor-not-allowed]="letraYaUsada(letra)">
+              {{ letra }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Tabla de Clasificación -->
+    <div class="mb-8">
+      <app-game-ranking gameName="ahorcado" [limit]="10"></app-game-ranking>
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-3">Cómo jugar</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">1.</span>
+          <span>Adivina la palabra oculta letra por letra</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">2.</span>
+          <span>Usa la pista y categoría para ayudarte</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">3.</span>
+          <span>Cada letra incorrecta agrega una parte al ahorcado</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">4.</span>
+          <span>Tienes 6 intentos para adivinar la palabra</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">5.</span>
+          <span>Acumula palabras correctas para aumentar tu puntuación</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

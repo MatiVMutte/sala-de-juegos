@@ -1,0 +1,163 @@
+<div class="min-h-full bg-gradient-to-br from-blue-50 to-blue-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <button 
+        (click)="volverAJuegos()"
+        class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <h1 class="text-3xl font-bold text-blue-800">Mayor o Menor</h1>
+      
+      <div class="w-24"></div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Cartas acertadas</p>
+        <p class="text-3xl font-bold text-blue-600">{{ cartasAcertadas() }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Racha actual</p>
+        <p class="text-3xl font-bold text-green-600">{{ racha() }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-4 text-center">
+        <p class="text-gray-600 text-sm mb-1">Mejor racha</p>
+        <p class="text-3xl font-bold text-purple-600">{{ mejorRacha() }}</p>
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div class="bg-white rounded-xl shadow-xl p-8">
+      
+      @if (!juegoIniciado()) {
+        <div class="text-center py-12">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">¿Listo para jugar?</h2>
+          <p class="text-gray-600 mb-6">Adivina si la siguiente carta será mayor o menor</p>
+          <button 
+            (click)="iniciarJuego()"
+            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+            Iniciar Juego
+          </button>
+        </div>
+      } @else {
+        
+        <!-- Carta Actual -->
+        <div class="flex flex-col items-center mb-8">
+          <p class="text-gray-600 text-lg mb-4">Carta actual:</p>
+          
+          @if (cartaActual()) {
+            <div class="relative">
+              <!-- Carta -->
+              <div class="w-48 h-72 bg-white rounded-xl shadow-2xl border-4 border-gray-200 flex flex-col items-center justify-center p-6 transition-transform duration-300"
+                   [class.scale-105]="mostrandoResultado()">
+                
+                <!-- Valor superior -->
+                <div class="absolute top-4 left-4 flex flex-col items-center">
+                  <span class="text-3xl font-bold" [ngClass]="obtenerColorPalo(cartaActual()!.palo)">
+                    {{ obtenerNombreValor(cartaActual()!.valor) }}
+                  </span>
+                  <span class="text-4xl" [ngClass]="obtenerColorPalo(cartaActual()!.palo)">
+                    {{ obtenerSimboloPalo(cartaActual()!.palo) }}
+                  </span>
+                </div>
+
+                <!-- Símbolo central -->
+                <span class="text-7xl" [ngClass]="obtenerColorPalo(cartaActual()!.palo)">
+                  {{ obtenerSimboloPalo(cartaActual()!.palo) }}
+                </span>
+
+                <!-- Valor inferior -->
+                <div class="absolute bottom-4 right-4 flex flex-col items-center rotate-180">
+                  <span class="text-3xl font-bold" [ngClass]="obtenerColorPalo(cartaActual()!.palo)">
+                    {{ obtenerNombreValor(cartaActual()!.valor) }}
+                  </span>
+                  <span class="text-4xl" [ngClass]="obtenerColorPalo(cartaActual()!.palo)">
+                    {{ obtenerSimboloPalo(cartaActual()!.palo) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Mensaje -->
+        @if (mensaje()) {
+          <div class="text-center mb-6">
+            <div class="bg-white border-2 rounded-lg p-4 shadow-md inline-block"
+                 [class.border-green-500]="!juegoTerminado()"
+                 [class.border-red-500]="juegoTerminado()">
+              <p class="text-lg font-semibold whitespace-pre-line" 
+                 [class.text-green-600]="!juegoTerminado()"
+                 [class.text-red-600]="juegoTerminado()">
+                {{ mensaje() }}
+              </p>
+            </div>
+          </div>
+        }
+
+        <!-- Botones de acción -->
+        @if (!juegoTerminado()) {
+          <div class="flex justify-center gap-4">
+            <button 
+              (click)="adivinar(false)"
+              [disabled]="mostrandoResultado()"
+              class="px-8 py-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xl rounded-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              MENOR
+            </button>
+            <button 
+              (click)="adivinar(true)"
+              [disabled]="mostrandoResultado()"
+              class="px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold text-xl rounded-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              MAYOR
+            </button>
+          </div>
+        } @else {
+          <div class="flex justify-center gap-4">
+            <button 
+              (click)="iniciarJuego()"
+              class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Jugar de nuevo
+            </button>
+            <button 
+              (click)="volverAJuegos()"
+              class="px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+              Salir
+            </button>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Tabla de Clasificación -->
+    <div class="mt-8">
+      <app-game-ranking gameName="mayor-o-menor" [limit]="10"></app-game-ranking>
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-3">Cómo jugar</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">1.</span>
+          <span>Se muestra una carta aleatoria</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">2.</span>
+          <span>Adivina si la siguiente carta será mayor o menor</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-600 font-bold">3.</span>
+          <span>¡Sigue jugando hasta fallar y trata de hacer la mayor racha posible!</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

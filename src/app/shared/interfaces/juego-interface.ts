@@ -3,4 +3,5 @@ export interface Juego {
     nombre: string;
     descripcion: string;
     imagen: string;
+    ruta?: string;
 }
