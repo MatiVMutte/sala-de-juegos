@@ -16,11 +16,10 @@ export class LoginPageComponent {
   showErrorModal = signal(false);
   errorMessage = signal('');
 
-  // Usuarios de prueba para login rápido
+  // Usuarios de prueba para login rápido (registrados en Autenticación)
   testUsers = [
     { email: 'mativmutte@gmail.com', password: '321321' },
-    { email: 'asd@gmail.com', password: '321321' },
-    { email: 'muttematias@gmail.com', password: '321321' }
+    { email: 'abc@gmail.com', password: '321321' }
   ];
 
   // Login rápido con usuario de prueba

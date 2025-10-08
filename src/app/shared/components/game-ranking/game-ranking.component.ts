@@ -4,7 +4,6 @@ import { GameResultsService, GameResult } from '../../services/game-results.serv
 
 @Component({
   selector: 'app-game-ranking',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './game-ranking.component.html'
 })

@@ -47,6 +47,9 @@ export class AuthService {
     if (response.data?.user == null)
       return { data: null, error: new Error('User not found') };
 
+    // Usar el ID de autenticación como ID del usuario
+    user.id = response.data.user.id;
+
     const { error } = await this.insertUser(user);
 
     return {
@@ -113,23 +116,23 @@ export class AuthService {
 
   async insertUser(user: User) {
     const { error } = await this.supabase.from('users').insert({
+      id: user.id,
       username: user.username,
       name: user.name,
       lastname: user.lastname,
       age: user.age,
       email: user.email,
-      auth_uuid: user.auth_uuid,
       photo_url: user.photo_url
     });
     return { error };
   }
 
-  async selectUser(auth_uuid: string) {
-    if (auth_uuid == null)
+  async selectUser(userId: string) {
+    if (userId == null)
       return { data: null, error: new Error('User not found') };
     const { data } = await this.supabase.from('users')
       .select('*')
-      .eq('auth_uuid', auth_uuid)
+      .eq('id', userId)
       .single();
     return { data, error: null };
   }
@@ -176,11 +179,11 @@ export class AuthService {
   }
 
   // Actualizar foto de perfil del usuario en la base de datos
-  async updateUserPhoto(auth_uuid: string, photo_url: string) {
+  async updateUserPhoto(userId: string, photo_url: string) {
     const { error } = await this.supabase
       .from('users')
       .update({ photo_url })
-      .eq('auth_uuid', auth_uuid);
+      .eq('id', userId);
     return { error };
   }
 }

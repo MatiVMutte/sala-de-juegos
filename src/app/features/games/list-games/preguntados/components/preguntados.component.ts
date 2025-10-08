@@ -9,7 +9,6 @@ import { GameRankingComponent } from '../../../../../shared/components/game-rank
 
 @Component({
   selector: 'app-preguntados',
-  standalone: true,
   imports: [CommonModule, GameRankingComponent],
   templateUrl: './preguntados.component.html'
 })
@@ -121,9 +120,9 @@ export class PreguntadosComponent implements OnInit {
     let mensajeFinal = `Juego terminado!\nRespuestas correctas: ${correctas}/${this.totalPreguntas()}\nPorcentaje: ${this.porcentajeAciertos()}%`;
     
     // Guardar resultado en Supabase
-    if (user?.auth_uuid) {
+    if (user?.id) {
       const resultado = await this.gameResultsService.saveGameResult({
-        user_id: user.auth_uuid,
+        user_id: user.id,
         game_name: 'preguntados',
         score: correctas,
         additional_data: {

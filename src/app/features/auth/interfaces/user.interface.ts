@@ -1,12 +1,11 @@
 export interface User {
-    id?: number;
+    id?: string; // UUID del usuario (mismo que auth.users.id)
     username: string;
     name: string;
     lastname: string;
     age: number;
     email: string;
     password: string;
-    auth_uuid?: string;
     photo_url?: string;
 }
 

@@ -105,9 +105,9 @@ export class AdivinaNumeroComponent {
     let mensajeFinal = `¡Felicitaciones! Adivinaste en ${intentos} ${intentos === 1 ? 'intento' : 'intentos'}!`;
     
     // Guardar resultado en Supabase (lowerIsBetter = true porque menos intentos es mejor)
-    if (user?.auth_uuid) {
+    if (user?.id) {
       const resultado = await this.gameResultsService.saveGameResult({
-        user_id: user.auth_uuid,
+        user_id: user.id,
         game_name: 'adivina-numero',
         score: intentos,
         additional_data: {

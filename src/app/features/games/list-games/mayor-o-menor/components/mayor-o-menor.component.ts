@@ -98,9 +98,9 @@ export class MayorOMenorComponent {
     }`;
     
     // Guardar resultado en Supabase
-    if (user?.auth_uuid) {
+    if (user?.id) {
       const resultado = await this.gameResultsService.saveGameResult({
-        user_id: user.auth_uuid,
+        user_id: user.id,
         game_name: 'mayor-o-menor',
         score: this.cartasAcertadas(),
         additional_data: {

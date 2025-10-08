@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-page',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chat-page.component.html'
 })
@@ -63,23 +62,24 @@ export class ChatPageComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (!mensaje || this.enviandoMensaje()) return;
 
     const user = this.currentUser();
-    if (!user?.auth_uuid) return;
+    if (!user?.id || !user?.username) return;
 
     this.enviandoMensaje.set(true);
 
-    const resultado = await this.chatService.enviarMensaje(user.auth_uuid, mensaje);
+    const resultado = await this.chatService.enviarMensaje(user.id, user.username, mensaje);
 
     if (resultado.error) {
       console.error('Error al enviar mensaje');
     } else {
       this.nuevoMensaje.set('');
+      // El scroll se hará automáticamente cuando llegue el mensaje por realtime
     }
 
     this.enviandoMensaje.set(false);
   }
 
   esMiMensaje(mensaje: Mensaje): boolean {
-    return mensaje.user_id === this.currentUser()?.auth_uuid;
+    return mensaje.user_id === this.currentUser()?.id;
   }
 
   formatearHora(fecha: Date | string | undefined): string {
@@ -98,8 +98,11 @@ export class ChatPageComponent implements OnInit, OnDestroy, AfterViewChecked {
   private scrollToBottom(): void {
     try {
       if (this.messagesContainer) {
-        this.messagesContainer.nativeElement.scrollTop = 
-          this.messagesContainer.nativeElement.scrollHeight;
+        // Usar setTimeout para asegurar que el DOM se haya actualizado
+        setTimeout(() => {
+          this.messagesContainer.nativeElement.scrollTop = 
+            this.messagesContainer.nativeElement.scrollHeight;
+        }, 0);
       }
     } catch(err) {
       console.error('Error al hacer scroll:', err);

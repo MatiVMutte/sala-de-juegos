@@ -9,7 +9,6 @@ import { GameRankingComponent } from '../../../../../shared/components/game-rank
 
 @Component({
   selector: 'app-ahorcado',
-  standalone: true,
   imports: [CommonModule, GameRankingComponent],
   templateUrl: './ahorcado.component.html'
 })
@@ -132,9 +131,9 @@ export class AhorcadoComponent {
     let mensajeFinal = `Juego terminado!\nPalabras acertadas: ${puntaje}`;
     
     // Guardar resultado en Supabase
-    if (user?.auth_uuid && puntaje > 0) {
+    if (user?.id && puntaje > 0) {
       const resultado = await this.gameResultsService.saveGameResult({
-        user_id: user.auth_uuid,
+        user_id: user.id,
         game_name: 'ahorcado',
         score: puntaje,
         additional_data: {

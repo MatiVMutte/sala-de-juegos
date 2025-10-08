@@ -17,19 +17,20 @@ export class ChatService {
 
   constructor() {}
 
-  // Cargar mensajes iniciales
+  // Cargar mensajes iniciales (últimos 15)
   async cargarMensajes() {
     try {
       const { data, error } = await this.supabase
-        .from('chat_messages')
+        .from('messages')
         .select(`
           *,
-          users!chat_messages_user_id_fkey (
+          users!messages_user_id_fkey (
             username,
             photo_url
           )
         `)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false })
+        .limit(15);
 
       if (error) {
         console.error('Error cargando mensajes:', error);
@@ -43,7 +44,8 @@ export class ChatService {
         photo_url: msg.users?.photo_url
       })) || [];
 
-      this.mensajesSubject.next(mensajes);
+      // Revertir el orden para mostrar del más antiguo al más nuevo
+      this.mensajesSubject.next(mensajes.reverse());
     } catch (error) {
       console.error('Error cargando mensajes:', error);
     }
@@ -58,27 +60,28 @@ export class ChatService {
 
     // Crear canal de tiempo real
     this.channel = this.supabase
-      .channel('chat_messages_channel')
+      .channel('messages_channel')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'chat_messages'
+          table: 'messages'
         },
         async (payload) => {
+          console.log('Nuevo mensaje recibido:', payload);
+          
           // Cuando llega un mensaje nuevo, obtener datos del usuario
           const nuevoMensaje = payload.new as Mensaje;
           
-          // Obtener datos del usuario
+          // Obtener datos del usuario (especialmente photo_url que no está en el mensaje)
           const { data: userData } = await this.supabase
             .from('users')
-            .select('username, photo_url')
-            .eq('auth_uuid', nuevoMensaje.user_id)
+            .select('photo_url')
+            .eq('id', nuevoMensaje.user_id)
             .single();
 
           if (userData) {
-            nuevoMensaje.username = userData.username;
             nuevoMensaje.photo_url = userData.photo_url;
           }
 
@@ -91,13 +94,14 @@ export class ChatService {
   }
 
   // Enviar un mensaje
-  async enviarMensaje(userId: string, mensaje: string) {
+  async enviarMensaje(userId: string, username: string, mensaje: string) {
     try {
       const { data, error } = await this.supabase
-        .from('chat_messages')
+        .from('messages')
         .insert({
           user_id: userId,
-          message: mensaje
+          username: username,
+          content: mensaje
         })
         .select();
 
